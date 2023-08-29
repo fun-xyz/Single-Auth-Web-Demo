@@ -78,7 +78,7 @@ export default function App() {
   return (
     <div className="App">
       <h1>Create FunWallet with Metamask</h1>
-      1. Connect Metamask.
+      1.&ensp;
       <ConnectorButton key={0} index={0} ></ConnectorButton>
       {
         active ?
@@ -90,7 +90,7 @@ export default function App() {
       <br></br>
       <br></br>
 
-      2. Initialize the FunWallet and Auth object.
+      2.&ensp;
       <button onClick={initializeSingleAuthFunAccount}>Initialize FunWallet</button>
       {account ?
         <div>
@@ -101,7 +101,7 @@ export default function App() {
       <br></br>
       <br></br>
 
-      3. Create FunWallet onchain.
+      3.&ensp;
       <button onClick={createWallet} >Create FunWallet</button>
       {loading ?
         <div>
