@@ -62,7 +62,7 @@ export default function App() {
     }
     initializeFunAccount({
       users: [{ userId: convertToValidUserId(connectorAccount) }],
-      index: 214
+      index: parseInt(Math.random()*10000000) //random number
     }).catch()
   }
 
@@ -92,7 +92,7 @@ export default function App() {
       {
         active ?
           <div>
-            Success! Metamask Connected!
+            Success! Metamask connected!
           </div>
           : <></>
       }
@@ -103,7 +103,7 @@ export default function App() {
       <button onClick={initializeSingleAuthFunAccount}>Initialize FunWallet</button>
       {account ?
         <div>
-          Success! FunWallet Address: {account}
+          Success! FunWallet address: {account}
         </div>
         : <></>
       }
@@ -120,7 +120,7 @@ export default function App() {
       }
       {receiptTxId ?
         <div>
-          Success! View on <a href={`https://goerli.etherscan.io/address/${account}`} target="_blank"> block explorer. </a>
+          <a href={`https://goerli.etherscan.io/tx/${receiptTxId}`} target="_blank" rel="noreferrer">Transaction submitted!</a> View wallet on <a href={`https://goerli.etherscan.io/address/${account}`} target="_blank" rel="noreferrer"> block explorer. </a>
         </div>
         : <></>
       }
