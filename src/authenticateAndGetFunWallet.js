@@ -56,6 +56,10 @@ export default function App() {
   const [auth] = usePrimaryAuth()
 
   const initializeSingleAuthFunAccount = async () => {
+    if (!connectorAccount) {
+      alert("Metamask not connected. Please follow the steps.")
+      return
+    }
     initializeFunAccount({
       users: [{ userId: convertToValidUserId(connectorAccount) }],
       index: 214
@@ -64,6 +68,11 @@ export default function App() {
 
 
   const createWallet = async () => {
+    if (!funWallet) {
+      alert("FunWallet not initialized. Please follow the steps.")
+      return
+    }
+    
     // Add your custom action code here!
     setLoading(true)
     console.log(auth)
