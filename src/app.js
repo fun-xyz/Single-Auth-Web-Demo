@@ -6,7 +6,7 @@ import {
   MetamaskConnector,
   Goerli,
   usePrimaryAuth,
-} from "@fun-xyz/react";
+} from "@funkit/react";
 import { useState } from "react";
 
 //Step 1: Initialize the FunStore. This action configures your environment based on your ApiKey, chain, and the authentication methods of your choosing. 
