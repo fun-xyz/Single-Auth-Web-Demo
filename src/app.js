@@ -1,12 +1,14 @@
 import "./styles.css";
 import {
+  FunContextProvider,
   convertToValidUserId,
-  useConnector,
+  // useConnector,
   useCreateFun,
   configureNewFunStore,
-  MetamaskConnector,
+  // MetamaskConnector,
   Goerli,
   usePrimaryAuth,
+  useMetamaskAuth,
 } from "@funkit/react";
 import { useState, useCallback } from "react";
 import { ChecklistItems, AsyncButton } from "./UI";
@@ -20,76 +22,84 @@ const DEFAULT_FUN_WALLET_CONFIG = {
   },
 };
 
-const DEFAULT_CONNECTORS = [MetamaskConnector()];
+// const DEFAULT_CONNECTORS = [MetamaskConnector()];
 
 configureNewFunStore({
   config: DEFAULT_FUN_WALLET_CONFIG,
-  connectors: DEFAULT_CONNECTORS,
+  // connectors: DEFAULT_CONNECTORS,
 });
 
-export default function App() {
+export default function AppWrapper() {
+  return (
+    <FunContextProvider appId={"clnatprpv00sfmi0fv3qc185b"}>
+      <App />
+    </FunContextProvider>
+  );
+}
+
+export function App() {
   const [receiptTxId, setReceiptTxId] = useState("");
   const [step, setStep] = useState(0);
+  const [active, setActive] = useState(false);
+  const [account, setAccount] = useState(false);
 
   // Step 2: Use the connector button to connect your authentication method, in this case metamask.
-  const {
-    active,
-    activate,
-    deactivate,
-    connector,
-    account: connectorAccount,
-  } = useConnector({ index: 0, autoConnect: true });
+  // const {
+  //   active,
+  //   activate,
+  //   deactivate,
+  //   connector,
+  //   account: connectorAccount,
+  // } = useConnector({ index: 0, autoConnect: true });
 
   /* ========================================================================
                             STEP 1: CONNECT METAMASK
      ======================================================================== */
 
-  const step1ConnectMetaMask = useCallback(async () => {
-    if (active) {
-      await deactivate(connector);
-    } else {
-      await activate(connector);
-    }
-  }, [active, activate, deactivate, connector]);
+  // const mmAuth = useMetamaskAuth()
+
+  async function step1ConnectMetaMask() {
+
+  }
 
   // Step 3: Use the initializeFunAccount method to create your funWallet object
-  const { account, initializeFunAccount, funWallet } = useCreateFun();
+  // const { account, initializeFunAccount, funWallet } = useCreateFun();
 
   // Step 4: Use the auth and funWallet to perform actions (ie: swap, transfer, etc.)
-  const [auth] = usePrimaryAuth();
+  // const [auth] = usePrimaryAuth();
 
   /* ========================================================================
                               STEP 2: CREATE WALLET
      ======================================================================== */
 
-  const step2CreateWallet = async () => {
-    if (!connectorAccount) {
-      alert("MetaMask not connected. Please follow the steps in order.");
-      return;
-    }
-    initializeFunAccount({
-      users: [{ userId: convertToValidUserId(connectorAccount) }],
-      index: parseInt(Math.random() * 10000000), //random number
-    }).catch();
-  };
+  async function step2CreateWallet() {
+    // if (!connectorAccount) {
+    //   alert("MetaMask not connected. Please follow the steps in order.");
+    //   return;
+    // }
+    // initializeFunAccount({
+    //   users: [{ userId: convertToValidUserId(connectorAccount) }],
+    //   index: parseInt(Math.random() * 10000000), //random number
+    // }).catch();
+  }
 
   /* ========================================================================
                               STEP 3: SEND TRANSACTION
      ======================================================================== */
 
-  const step3SendTransaction = async () => {
-    if (!funWallet) {
-      alert("FunWallet not initialized. Please follow the steps in order.");
-      return;
-    }
+  async function step3SendTransaction() {
+    // if (!funWallet) {
+    //   alert("FunWallet not initialized. Please follow the steps in order.");
+    //   return;
+    // }
 
-    // Add your custom action code here!
-    const op = await funWallet.create(auth, await auth.getUserId());
-    const receipt = await funWallet.executeOperation(auth, op);
-    setReceiptTxId(receipt.txId);
+    // // Add your custom action code here!
+    // const op = await funWallet.create(auth, await auth.getUserId());
+    // const receipt = await funWallet.executeOperation(auth, op);
+    // setReceiptTxId(receipt.txId);
 
-    // FINAL STEP: Add your custom action logic here (swap, transfer, etc)
-  };
+    // // FINAL STEP: Add your custom action logic here (swap, transfer, etc)
+  }
 
   return (
     <div className="App">
