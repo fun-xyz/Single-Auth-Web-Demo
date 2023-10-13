@@ -11,7 +11,7 @@ import {
 import { useState, useCallback } from "react";
 import { ChecklistItems, AsyncButton } from "./UI";
 
-//Step 1: Initialize the FunStore. This action configures your environment based on your ApiKey, chain, and the authentication methods of your choosing.
+// Step 1: Initialize the FunStore. This action configures your environment based on your ApiKey, chain, and the authentication methods of your choosing.
 const DEFAULT_FUN_WALLET_CONFIG = {
   apiKey: "hnHevQR0y394nBprGrvNx4HgoZHUwMet5mXTOBhf",
   chain: Goerli,
@@ -31,7 +31,7 @@ export default function App() {
   const [receiptTxId, setReceiptTxId] = useState("");
   const [step, setStep] = useState(0);
 
-  //Step 2: Use the connector button to connect your authentication method, in this case metamask.
+  // Step 2: Use the connector button to connect your authentication method, in this case metamask.
   const {
     active,
     activate,
@@ -40,7 +40,11 @@ export default function App() {
     account: connectorAccount,
   } = useConnector({ index: 0, autoConnect: true });
 
-  const toggleConnect = useCallback(async () => {
+  /* ========================================================================
+                            STEP 1: CONNECT METAMASK
+     ======================================================================== */
+
+  const step1ConnectMetaMask = useCallback(async () => {
     if (active) {
       await deactivate(connector);
     } else {
@@ -48,15 +52,19 @@ export default function App() {
     }
   }, [active, activate, deactivate, connector]);
 
-  //Step 3: Use the initializeFunAccount method to create your funWallet object
+  // Step 3: Use the initializeFunAccount method to create your funWallet object
   const { account, initializeFunAccount, funWallet } = useCreateFun();
 
-  //Step 4: Use the auth and funWallet to perform actions (ie: swap, transfer, etc.)
+  // Step 4: Use the auth and funWallet to perform actions (ie: swap, transfer, etc.)
   const [auth] = usePrimaryAuth();
 
-  const initializeSingleAuthFunAccount = async () => {
+  /* ========================================================================
+                              STEP 2: CREATE WALLET
+     ======================================================================== */
+
+  const step2CreateWallet = async () => {
     if (!connectorAccount) {
-      alert("Metamask not connected. Please follow the steps.");
+      alert("MetaMask not connected. Please follow the steps in order.");
       return;
     }
     initializeFunAccount({
@@ -65,9 +73,13 @@ export default function App() {
     }).catch();
   };
 
-  const createWallet = async () => {
+  /* ========================================================================
+                              STEP 3: SEND TRANSACTION
+     ======================================================================== */
+
+  const step3SendTransaction = async () => {
     if (!funWallet) {
-      alert("FunWallet not initialized. Please follow the steps.");
+      alert("FunWallet not initialized. Please follow the steps in order.");
       return;
     }
 
@@ -81,16 +93,19 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>Create FunWallet with Metamask</h1>
+      <h1>Create FunWallet with MetaMask</h1>
       <ChecklistItems stepNumber={step}>
+        {/* ========================================================================
+                                  STEP 1: CONNECT METAMASK
+          ======================================================================== */}
         <div>
-          <h3>{active ? "Metamask connected!" : "Connect metamask"}</h3>
+          <h3>{active ? "MetaMask connected!" : "Connect metamask"}</h3>
           {active ? (
             <p> You are now ready to use FunWallet </p>
           ) : (
             <AsyncButton
               onClick={async () => {
-                await toggleConnect();
+                await step1ConnectMetaMask();
                 setStep(1);
               }}
             >
@@ -98,6 +113,9 @@ export default function App() {
             </AsyncButton>
           )}
         </div>
+        {/* ========================================================================
+                                    STEP 2: CREATE WALLET
+          ======================================================================== */}
         <div>
           <h3>Initialize FunWallet</h3>
           {account ? (
@@ -106,7 +124,7 @@ export default function App() {
             <AsyncButton
               disabled={step < 1}
               onClick={async () => {
-                await initializeSingleAuthFunAccount();
+                await step2CreateWallet();
                 setStep(2);
               }}
             >
@@ -114,13 +132,15 @@ export default function App() {
             </AsyncButton>
           )}
         </div>
-
+        {/* ========================================================================
+                                    STEP 3: SEND TRANSACTION
+          ======================================================================== */}
         <div>
           <h3> Create FunWallet </h3>
           <AsyncButton
             disabled={step < 2}
             onClick={async () => {
-              await createWallet();
+              await step3SendTransaction();
               setStep(3);
             }}
           >
