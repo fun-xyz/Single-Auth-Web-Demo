@@ -5,6 +5,8 @@ This is a demo of [`@funkit/react`](https://www.npmjs.com/package/@funkit/react)
 2.  Initializing a FunWallet
 3.  Creating a transaction on a FunWallet
 
+https://github.com/fun-xyz/Single-Auth-Web-Demo-Next/assets/95644202/4c1f8ece-02c6-4f4b-af2c-cd3c0281be68
+
 Through this demo, you will gain a clearer understanding on the following hooks provided in `@funkit/react`:
 1. `useMetamaskAuth`
 2. `useFunWallet`
