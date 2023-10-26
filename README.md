@@ -5,10 +5,6 @@ This is a demo of [`@funkit/react`](https://www.npmjs.com/package/@funkit/react)
 2.  Initializing a FunWallet
 3.  Creating a transaction on a FunWallet
 
-Note that the created FunWallet will not have any funds and will require funds to make transactions.
-
-[Video here]
-
 Through this demo, you will gain a clearer understanding on the following hooks provided in `@funkit/react`:
 1. `useMetamaskAuth`
 2. `useFunWallet`

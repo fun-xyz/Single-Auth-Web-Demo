@@ -114,7 +114,7 @@ function App() {
         ),
       },
       {
-        title: "Create FunWallet",
+        title: "Create a transaction on a FunWallet",
         actionTitle: "Create",
         actionOnClick: step3SendTransaction,
         switchCondition: !!receiptTxId,
