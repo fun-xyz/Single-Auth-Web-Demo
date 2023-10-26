@@ -47,7 +47,7 @@ function App() {
   }, [connectMetamask]);
 
   /* ========================================================================
-                              STEP 2: CREATE WALLET
+                            STEP 2: INITIALIZE WALLET
      ======================================================================== */
 
   const { address, createFunWallet } = useFunWallet();
@@ -62,7 +62,7 @@ function App() {
   }, [metaMaskAuth, active, createFunWallet])
 
   /* ========================================================================
-                              STEP 3: SEND TRANSACTION
+                            STEP 3: SEND TRANSACTION
      ======================================================================== */
 
   // Make use of useAction hook to execute any supported funWallet action
@@ -119,7 +119,7 @@ function App() {
         actionOnClick: step3SendTransaction,
         switchCondition: !!receiptTxId,
         completeContent: (
-          <div style={{ fontSize: 14 }}>
+          <p>
             <Link
               href={`${GOERLI_ETHERSCAN_BASE_URL}/tx/${receiptTxId}`}
               target="_blank"
@@ -135,7 +135,7 @@ function App() {
             >
               block explorer.
             </Link>
-          </div>
+          </p>
         ),
       },
     ];
