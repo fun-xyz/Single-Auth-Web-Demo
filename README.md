@@ -1,13 +1,33 @@
 # Single Auth Demo of @funkit/react 
 
-This is a demo of [@funkit/react](https://www.npmjs.com/package/@funkit/react) with a single signer "Metamask".
-It demonstrates how to connect metamask and than initialize the Fun Wallet and make a transaction using the newly created Fun Wallet.
+This is a demo of [`@funkit/react`](https://www.npmjs.com/package/@funkit/react). Covered usecases:
+1.  Connecting Metamask 
+2.  Initializing a FunWallet
+3.  Creating a transaction on a FunWallet
 
-** THE CREATED WALLET DOES NOT HAVE ANY FUNDS AND STILL REQUIRES FUNDS TO MAKE TRANSACTIONS ** 
+Note that the created FunWallet will not have any funds and will require funds to make transactions.
+
+[Video here]
+
+Through this demo, you will gain a clearer understanding on the following hooks provided in `@funkit/react`:
+1. `useMetamaskAuth`
+2. `useFunWallet`
+3. `useAction`
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -23,5 +43,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
