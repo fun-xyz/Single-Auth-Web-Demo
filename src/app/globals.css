@@ -109,7 +109,7 @@ button p {
   font-weight: 500;
 }
 
-button:hover {
+button:not(.disabled):hover {
   transform: scale(1.05);
 }
 
@@ -175,4 +175,12 @@ iframe {
   width: 100%;
   height: 100%;
   border: none;
+}
+
+a {
+  color: #465ceb;
+}
+
+a:hover {
+  text-decoration: underline;
 }
