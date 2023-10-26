@@ -18,7 +18,7 @@ import AsyncButton from "./components/AsyncButton";
  *                      STEP 0: DEFINE CONFIGS / ENVS
  * =========================================================================*/
 const GOERLI_ETHERSCAN_BASE_URL = "https://goerli.etherscan.io";
-const FUN_APP_ID = "clnatprpv00sfmi0fv3qc185b";
+const YOUR_PRIVY_APP_ID = "clnatprpv00sfmi0fv3qc185b";
 const DEFAULT_FUN_WALLET_CONFIG = {
   apiKey: "hnHevQR0y394nBprGrvNx4HgoZHUwMet5mXTOBhf",
   chain: Goerli,
@@ -175,7 +175,7 @@ function App() {
 
 export default function AppWrapper() {
   return (
-    <FunContextProvider options={DEFAULT_FUN_WALLET_CONFIG} privyAppId={FUN_APP_ID}>
+    <FunContextProvider options={DEFAULT_FUN_WALLET_CONFIG} privyAppId={YOUR_PRIVY_APP_ID}>
       <App />
     </FunContextProvider>
   );
