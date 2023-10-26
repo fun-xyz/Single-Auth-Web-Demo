@@ -1,6 +1,7 @@
+import Image from "next/image";
 import React, { useState } from "react";
 
-export const ChecklistItems = ({ stepNumber, children }) => {
+export const ChecklistItems = ({ stepNumber, children }: {stepNumber: number; children: React.ReactNode}) => {
   return (
     <ul>
       {React.Children.map(children, (child, idx) => {
@@ -14,7 +15,7 @@ export const ChecklistItems = ({ stepNumber, children }) => {
                 {stepTodo ? (
                   idx + 1
                 ) : (
-                  <img src="checkmark.svg" alt="checkmark" />
+                  <Image src="checkmark.svg" alt="checkmark" width={16} height={16}/>
                 )}
               </div>
               {idx < React.Children.count(children) - 1 && (
@@ -31,7 +32,7 @@ export const ChecklistItems = ({ stepNumber, children }) => {
   );
 };
 
-export const AsyncButton = ({ children, onClick, disabled }) => {
+export const AsyncButton = ({ children, onClick, disabled }: {children: React.ReactNode, onClick: () => Promise<void>; disabled: boolean}) => {
   const [loading, setLoading] = useState(false);
 
   return (
