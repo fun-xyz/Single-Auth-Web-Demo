@@ -51,9 +51,9 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.42.0.tgz"
   integrity sha512-6SWlXpWU5AvId8Ac7zjzmIOqMOba/JWY8XZ4A7q7Gn1Vlfg/SFFIlrtHXt9nPn4op9ZPAkl91Jao+QQv3r/ukw==
 
-"@funkit/react@file:../../funkit-react":
+"@funkit/react@file:../funkit-react":
   version "0.8.6"
-  resolved "file:../../funkit-react"
+  resolved "file:../funkit-react"
   dependencies:
     "@coinbase/wallet-sdk" "^3.6.6"
     "@funkit/core" "^0.8.5"
