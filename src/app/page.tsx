@@ -66,7 +66,7 @@ function App() {
      ======================================================================== */
 
   // Make use of useAction hook to execute any supported funWallet action
-  const { executeOperation, ready, result } = useAction({
+  const { executeOperation, ready } = useAction({
     action: ActionType.create,
     params: null,
   });
@@ -81,8 +81,6 @@ function App() {
     if (!op) return;
     setReceiptTxId(op.txId as string);
     setStep(3);
-
-    // FINAL STEP: Add your custom action logic here (swap, transfer, etc)
   }, [executeOperation, ready])
 
 
@@ -121,21 +119,19 @@ function App() {
         actionOnClick: step3SendTransaction,
         switchCondition: !!receiptTxId,
         completeContent: (
-          <div style={{ paddingTop: 10, fontSize: 14 }}>
+          <div style={{ fontSize: 14 }}>
             <Link
               href={`${GOERLI_ETHERSCAN_BASE_URL}/tx/${receiptTxId}`}
               target="_blank"
               rel="noreferrer"
-              className="underline text-blue-600"
             >
               Transaction submitted!
             </Link>{" "}
-            View wallet on{" "}
+            View (smart contract) wallet on{" "}
             <Link
               href={`${GOERLI_ETHERSCAN_BASE_URL}/address/${address}`}
               target="_blank"
               rel="noreferrer"
-              className="underline text-blue-600"
             >
               block explorer.
             </Link>
