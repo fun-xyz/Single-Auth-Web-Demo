@@ -1,5 +1,21 @@
 import "./styles.css";
 import {
+  // FunContextProvider,
+  convertToValidUserId,
+  // useConnector,
+  useCreateFun,
+  configureNewFunStore,
+  // MetamaskConnector,
+  Goerli,
+  usePrimaryAuth,
+  // useMetamaskAuth,
+} from "@funkit/react";
+import { useState, useCallback } from "react";
+import { ChecklistItems, AsyncButton } from "./UI";
+
+const { FunContextProvider, useMetamaskAuth } = require("@funkit/react")
+
+console.log({
   FunContextProvider,
   convertToValidUserId,
   // useConnector,
@@ -9,12 +25,10 @@ import {
   Goerli,
   usePrimaryAuth,
   useMetamaskAuth,
-} from "@funkit/react";
-import { useState, useCallback } from "react";
-import { ChecklistItems, AsyncButton } from "./UI";
+})
 
 // Step 1: Initialize the FunStore. This action configures your environment based on your ApiKey, chain, and the authentication methods of your choosing.
-const DEFAULT_FUN_WALLET_CONFIG = {
+const DEFAULT_FUN_CONFIG = {
   apiKey: "hnHevQR0y394nBprGrvNx4HgoZHUwMet5mXTOBhf",
   chain: Goerli,
   gasSponsor: {
@@ -24,14 +38,14 @@ const DEFAULT_FUN_WALLET_CONFIG = {
 
 // const DEFAULT_CONNECTORS = [MetamaskConnector()];
 
-configureNewFunStore({
-  config: DEFAULT_FUN_WALLET_CONFIG,
-  // connectors: DEFAULT_CONNECTORS,
-});
+// configureNewFunStore({
+//   config: DEFAULT_FUN_WALLET_CONFIG,
+//   // connectors: DEFAULT_CONNECTORS,
+// });
 
 export default function AppWrapper() {
   return (
-    <FunContextProvider appId={"clnatprpv00sfmi0fv3qc185b"}>
+    <FunContextProvider options={DEFAULT_FUN_CONFIG} privyAppId={"clnatprpv00sfmi0fv3qc185b"}>
       <App />
     </FunContextProvider>
   );
@@ -56,7 +70,7 @@ export function App() {
                             STEP 1: CONNECT METAMASK
      ======================================================================== */
 
-  // const mmAuth = useMetamaskAuth()
+  const mmAuth = useMetamaskAuth()
 
   async function step1ConnectMetaMask() {
 
