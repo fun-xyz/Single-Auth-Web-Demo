@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const ChecklistItems = ({ stepNumber, children }) => {
+export function ChecklistItems({ stepNumber, children }) {
   return (
     <ul>
       {React.Children.map(children, (child, idx) => {
@@ -14,24 +14,36 @@ export const ChecklistItems = ({ stepNumber, children }) => {
                 {stepTodo ? (
                   idx + 1
                 ) : (
-                  <img src="checkmark.svg" alt="checkmark" />
+                  <img
+                    src="checkmark.svg"
+                    alt="checkmark"
+                    width={16}
+                    height={16}
+                  />
                 )}
               </div>
               {idx < React.Children.count(children) - 1 && (
                 <div
                   className={`verticalLine ${stepTodo ? "blue" : "green"}`}
-                ></div>
+                />
               )}
             </div>
-            {child}
+            <div
+              style={{
+                marginTop: "-0.25rem",
+                marginBottom: "0.75rem",
+              }}
+            >
+              {child}
+            </div>
           </li>
         );
       })}
     </ul>
   );
-};
+}
 
-export const AsyncButton = ({ children, onClick, disabled }) => {
+export function AsyncButton({ onClick, disabled, title = "" }) {
   const [loading, setLoading] = useState(false);
 
   return (
@@ -44,7 +56,7 @@ export const AsyncButton = ({ children, onClick, disabled }) => {
         setLoading(false);
       }}
     >
-      {loading ? <div className="loadingIndicator" /> : children}
+      {loading ? <div className="loadingIndicator" /> : <p>{title}</p>}
     </button>
   );
-};
+}

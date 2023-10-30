@@ -1,34 +1,21 @@
 import "./styles.css";
 import {
-  // FunContextProvider,
-  convertToValidUserId,
-  // useConnector,
-  useCreateFun,
-  configureNewFunStore,
-  // MetamaskConnector,
-  Goerli,
-  usePrimaryAuth,
-  // useMetamaskAuth,
-} from "@funkit/react";
-import { useState, useCallback } from "react";
-import { ChecklistItems, AsyncButton } from "./UI";
-
-const { FunContextProvider, useMetamaskAuth } = require("@funkit/react")
-
-console.log({
   FunContextProvider,
-  convertToValidUserId,
-  // useConnector,
-  useCreateFun,
-  configureNewFunStore,
-  // MetamaskConnector,
   Goerli,
-  usePrimaryAuth,
   useMetamaskAuth,
-})
+  useAction,
+  useFunWallet,
+} from "@funkit/react";
+import { useState, useCallback, useMemo, Fragment } from "react";
+import { ChecklistItems, AsyncButton } from "./UI";
+import { ActionType } from "@funkit/react";
 
-// Step 1: Initialize the FunStore. This action configures your environment based on your ApiKey, chain, and the authentication methods of your choosing.
-const DEFAULT_FUN_CONFIG = {
+/* ======================================================================== *
+ *                      STEP 0: DEFINE CONFIGS / ENVS
+ * =========================================================================*/
+const GOERLI_ETHERSCAN_BASE_URL = "https://goerli.etherscan.io";
+const YOUR_PRIVY_APP_ID = "clnatprpv00sfmi0fv3qc185b";
+const DEFAULT_FUN_WALLET_CONFIG = {
   apiKey: "hnHevQR0y394nBprGrvNx4HgoZHUwMet5mXTOBhf",
   chain: Goerli,
   gasSponsor: {
@@ -36,161 +23,175 @@ const DEFAULT_FUN_CONFIG = {
   },
 };
 
-// const DEFAULT_CONNECTORS = [MetamaskConnector()];
-
-// configureNewFunStore({
-//   config: DEFAULT_FUN_WALLET_CONFIG,
-//   // connectors: DEFAULT_CONNECTORS,
-// });
-
-export default function AppWrapper() {
-  return (
-    <FunContextProvider options={DEFAULT_FUN_CONFIG} privyAppId={"clnatprpv00sfmi0fv3qc185b"}>
-      <App />
-    </FunContextProvider>
-  );
-}
-
 export function App() {
   const [receiptTxId, setReceiptTxId] = useState("");
   const [step, setStep] = useState(0);
-  const [active, setActive] = useState(false);
-  const [account, setAccount] = useState(false);
-
-  // Step 2: Use the connector button to connect your authentication method, in this case metamask.
-  // const {
-  //   active,
-  //   activate,
-  //   deactivate,
-  //   connector,
-  //   account: connectorAccount,
-  // } = useConnector({ index: 0, autoConnect: true });
-
   /* ========================================================================
                             STEP 1: CONNECT METAMASK
      ======================================================================== */
 
-  const mmAuth = useMetamaskAuth()
+  const {
+    auth: metaMaskAuth,
+    active,
+    login: connectMetamask,
+  } = useMetamaskAuth();
 
-  async function step1ConnectMetaMask() {
-
-  }
-
-  // Step 3: Use the initializeFunAccount method to create your funWallet object
-  // const { account, initializeFunAccount, funWallet } = useCreateFun();
-
-  // Step 4: Use the auth and funWallet to perform actions (ie: swap, transfer, etc.)
-  // const [auth] = usePrimaryAuth();
-
-  /* ========================================================================
-                              STEP 2: CREATE WALLET
-     ======================================================================== */
-
-  async function step2CreateWallet() {
-    // if (!connectorAccount) {
-    //   alert("MetaMask not connected. Please follow the steps in order.");
-    //   return;
-    // }
-    // initializeFunAccount({
-    //   users: [{ userId: convertToValidUserId(connectorAccount) }],
-    //   index: parseInt(Math.random() * 10000000), //random number
-    // }).catch();
-  }
+  const step1ConnectMetaMask = useCallback(async () => {
+    await connectMetamask();
+    setStep(1);
+  }, [connectMetamask]);
 
   /* ========================================================================
-                              STEP 3: SEND TRANSACTION
+                            STEP 2: INITIALIZE WALLET
      ======================================================================== */
 
-  async function step3SendTransaction() {
-    // if (!funWallet) {
-    //   alert("FunWallet not initialized. Please follow the steps in order.");
-    //   return;
-    // }
+  const { address, createFunWallet } = useFunWallet();
 
-    // // Add your custom action code here!
-    // const op = await funWallet.create(auth, await auth.getUserId());
-    // const receipt = await funWallet.executeOperation(auth, op);
-    // setReceiptTxId(receipt.txId);
+  const step2InitalizeWallet = useCallback(async () => {
+    if (!active || !metaMaskAuth) {
+      alert("MetaMask not connected. Please follow the steps in order.");
+      return;
+    }
+    await createFunWallet(metaMaskAuth).catch();
+    setStep(2);
+  }, [metaMaskAuth, active, createFunWallet]);
 
-    // // FINAL STEP: Add your custom action logic here (swap, transfer, etc)
-  }
+  /* ========================================================================
+                            STEP 3: SEND TRANSACTION
+     ======================================================================== */
+
+  // Make use of useAction hook to execute any supported funWallet action
+  const { executeOperation, ready } = useAction({
+    action: ActionType.create,
+    params: null,
+  });
+
+  const step3SendTransaction = useCallback(async () => {
+    if (!ready) {
+      alert("FunWallet not initialized. Please follow the steps in order.");
+      return;
+    }
+
+    const op = await executeOperation();
+    if (!op) return;
+    setReceiptTxId(op.txId);
+    setStep(3);
+  }, [executeOperation, ready]);
+
+  // Build the step items
+  const stepItems = useMemo(() => {
+    return [
+      {
+        title: "Connect MetaMask",
+        actionTitle: "Connect",
+        actionOnClick: step1ConnectMetaMask,
+        switchCondition: !!active,
+        completeContent: <p>Connected! You are now ready to use FunWallet</p>,
+      },
+      {
+        title: "Initialize FunWallet",
+        actionTitle: "Initialize",
+        actionOnClick: step2InitalizeWallet,
+        switchCondition: !!address,
+        completeContent: (
+          <Fragment>
+            <p>
+              Success! FunWallet Address:
+              <a
+                href={`${GOERLI_ETHERSCAN_BASE_URL}/address/${address}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                &nbsp;{address}.
+              </a>
+            </p>
+          </Fragment>
+        ),
+      },
+      {
+        title: "Create a transaction on a FunWallet",
+        actionTitle: "Create",
+        actionOnClick: step3SendTransaction,
+        switchCondition: !!receiptTxId,
+        completeContent: (
+          <p>
+            <a
+              href={`${GOERLI_ETHERSCAN_BASE_URL}/tx/${receiptTxId}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Transaction submitted!
+            </a>{" "}
+            View (smart contract) wallet on{" "}
+            <a
+              href={`${GOERLI_ETHERSCAN_BASE_URL}/address/${address}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              block explorer.
+            </a>
+          </p>
+        ),
+      },
+    ];
+  }, [
+    step1ConnectMetaMask,
+    active,
+    step2InitalizeWallet,
+    address,
+    step3SendTransaction,
+    receiptTxId,
+  ]);
 
   return (
-    <div className="App">
-      <h1>Create FunWallet with MetaMask</h1>
-      <ChecklistItems stepNumber={step}>
-        {/* ========================================================================
-                                  STEP 1: CONNECT METAMASK
-          ======================================================================== */}
-        <div>
-          <h3>{active ? "MetaMask connected!" : "Connect metamask"}</h3>
-          {active ? (
-            <p> You are now ready to use FunWallet </p>
-          ) : (
-            <AsyncButton
-              onClick={async () => {
-                await step1ConnectMetaMask();
-                setStep(1);
-              }}
-            >
-              <p>Connect</p>
-            </AsyncButton>
-          )}
-        </div>
-        {/* ========================================================================
-                                    STEP 2: CREATE WALLET
-          ======================================================================== */}
-        <div>
-          <h3>Initialize FunWallet</h3>
-          {account ? (
-            <p>Success! FunWallet Address: {account}</p>
-          ) : (
-            <AsyncButton
-              disabled={step < 1}
-              onClick={async () => {
-                await step2CreateWallet();
-                setStep(2);
-              }}
-            >
-              <p>Initialize</p>
-            </AsyncButton>
-          )}
-        </div>
-        {/* ========================================================================
-                                    STEP 3: SEND TRANSACTION
-          ======================================================================== */}
-        <div>
-          <h3> Create FunWallet </h3>
-          <AsyncButton
-            disabled={step < 2}
-            onClick={async () => {
-              await step3SendTransaction();
-              setStep(3);
-            }}
-          >
-            <p>Create</p>
-          </AsyncButton>
-          {receiptTxId && (
-            <div style={{ paddingTop: 10, fontSize: 14 }}>
-              <a
-                href={`https://goerli.etherscan.io/tx/${receiptTxId}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Transaction submitted!
-              </a>{" "}
-              View wallet on{" "}
-              <a
-                href={`https://goerli.etherscan.io/address/${account}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                block explorer.
-              </a>
+    <div
+      className="App"
+      style={{
+        padding: "1.5rem",
+        marginTop: "2rem",
+        marginLeft: "1rem",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+      }}
+    >
+      <div style={{ width: 600 }}>
+        <h1
+          style={{
+            paddingBottom: "1rem",
+            fontWeight: "bold",
+          }}
+        >
+          Create FunWallet with MetaMask
+        </h1>
+        <ChecklistItems stepNumber={step}>
+          {stepItems.map((stepItem, idx) => (
+            <div id={stepItem.title} key={stepItem.title}>
+              <h3>{stepItem.title}</h3>
+              {stepItem.switchCondition ? (
+                stepItem.completeContent
+              ) : (
+                <AsyncButton
+                  onClick={() => stepItem.actionOnClick?.()}
+                  disabled={step < idx}
+                  title={stepItem.actionTitle}
+                />
+              )}
             </div>
-          )}
-        </div>
-      </ChecklistItems>
+          ))}
+        </ChecklistItems>
+      </div>
     </div>
+  );
+}
+
+export default function AppWrapper() {
+  return (
+    <FunContextProvider
+      options={DEFAULT_FUN_WALLET_CONFIG}
+      privyAppId={YOUR_PRIVY_APP_ID}
+    >
+      <App />
+    </FunContextProvider>
   );
 }
